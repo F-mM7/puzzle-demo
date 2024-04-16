@@ -8,7 +8,7 @@ function round_unit(x, b = 0, a = unit) {
   return Math.round((x - b) / a) * a + b;
 }
 
-const res = 48;
+const res = 128;
 
 const pieces = [];
 
