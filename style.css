@@ -1,0 +1,51 @@
+* {
+  user-select: none;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  margin: 0;
+}
+
+#field {
+  display: flex;
+  margin: auto;
+  background-color: silver;
+}
+
+#board {
+  margin: auto;
+  background-color: gray;
+}
+
+.piece {
+  position: absolute;
+}
+
+/* ==== base ==== */
+
+html {
+  touch-action: manipulation;
+}
+
+/* animation */
+.correct {
+  animation-name: correct;
+  animation-duration: 1s;
+}
+.incorrect {
+  animation-name: incorrect;
+  animation-duration: 1s;
+}
+@keyframes correct {
+  0% {
+    background-color: green;
+  }
+}
+@keyframes incorrect {
+  0% {
+    background-color: maroon;
+  }
+}
