@@ -84,12 +84,12 @@ const colors = [
 
 function form(cvs, v) {
   const cvs_jq = $(cvs);
-  cvs_jq.attr("v", v);
 
   let x_min = v[0][0];
   let x_max = v[0][0];
   let y_min = v[0][1];
   let y_max = v[0][1];
+
   for ([x, y] of v) {
     x_min = Math.min(x_min, x);
     x_max = Math.max(x_max, x);
@@ -97,31 +97,32 @@ function form(cvs, v) {
     y_max = Math.max(y_max, y);
   }
 
-  cvs_jq.css({
-    height: unit * (x_max - x_min + 1),
-    width: unit * (y_max - y_min + 1),
-  });
+  for (i in v) {
+    v[i][0] -= x_min;
+    v[i][1] -= y_min;
+  }
+  const h = x_max - x_min + 1;
+  const w = y_max - y_min + 1;
+  cvs_jq.attr("v", v);
 
-  cvs_jq[0].height = res * (x_max - x_min + 1);
-  cvs_jq[0].width = res * (y_max - y_min + 1);
+  cvs_jq.css({
+    height: unit * h,
+    width: unit * w,
+  });
+  cvs_jq[0].height = res * h;
+  cvs_jq[0].width = res * w;
 
   const ctx = cvs_jq[0].getContext("2d");
   ctx.fillStyle = cvs_jq.attr("color");
-
-  for ([x, y] of v) {
-    ctx.strokeRect((y - y_min) * res, (x - x_min) * res, res, res);
-    ctx.fillRect((y - y_min) * res, (x - x_min) * res, res, res);
-  }
+  for ([x, y] of v) ctx.fillRect(y * res, x * res, res, res);
+  for ([x, y] of v) ctx.strokeRect(y * res, x * res, res, res);
 }
 
-const dx = [1, 0, -1, 0];
-const dy = [0, 1, 0, -1];
-
-function rot_r(r, cx = 0, cy = 0) {
+function rot_r(r) {
   const x = r[0];
   const y = r[1];
-  const nx = y - cy + cx;
-  const ny = -(x - cx) + cy;
+  const nx = y;
+  const ny = -x;
   return [nx, ny];
 }
 
@@ -140,14 +141,12 @@ function rot(cvs) {
   const cvs_jq = $(cvs);
   const v = get_v(cvs_jq);
 
-  const cx = v[0][0];
-  const cy = v[0][1];
-  for (i in v) v[i] = rot_r(v[i], cx, cy);
+  for (i in v) v[i] = rot_r(v[i]);
 
   form(cvs, v);
 }
 
-function add_piece(v = [[0, 0]], color = "white") {
+function put_piece(v = [[0, 0]], color = "white") {
   const cvs_jq = $("<canvas>", {
     class: "piece",
   })
@@ -188,5 +187,5 @@ window.onload = function () {
   });
   $("#board").css({ height: unit * H, width: unit * W });
 
-  for (i in tetrominos) add_piece(tetrominos[i], colors[i]);
+  for (i in tetrominos) put_piece(tetrominos[i], colors[i]);
 };
